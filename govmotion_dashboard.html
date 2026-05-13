@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GovMotion — Early Gov Market Entrants (100)</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121a2b;
+    --panel-2: #18223a;
+    --border: #25324f;
+    --text: #e6edf7;
+    --muted: #8da0c0;
+    --accent: #4f8cff;
+    --accent-2: #6ee7b7;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --gold: #fbbf24;
+  --partner: #c084fc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg, #0b1220 0%, #0a0f1c 100%);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    padding: 28px 32px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: rgba(11,18,32,0.92);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  header .sub {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 4px;
+    max-width: 720px;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .controls input, .controls select {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    min-width: 180px;
+  }
+  .stats {
+    display: flex;
+    gap: 24px;
+    padding: 10px 32px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stats b { color: var(--text); }
+  .market-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(18,26,43,0.5);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .market-bar .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-right: 6px;
+  }
+  .pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.12s;
+  }
+  .pill:hover { color: var(--text); border-color: #3a4d75; }
+  .pill .ct { color: var(--muted); margin-left: 6px; font-size: 11px; }
+  .pill.active { background: rgba(79,140,255,0.18); border-color: var(--accent); color: var(--accent); }
+  .pill.active.fed { background: rgba(110,231,183,0.15); border-color: var(--accent-2); color: var(--accent-2); }
+  .pill.active.sl { background: rgba(251,191,36,0.18); border-color: var(--gold); color: var(--gold); }
+  .pill.active.both { background: rgba(245,158,11,0.15); border-color: var(--warn); color: var(--warn); }
+  .market-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--panel-2);
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .market-badge.fed { color: var(--accent-2); border-color: rgba(110,231,183,0.4); }
+  .market-badge.sl { color: var(--gold); border-color: rgba(251,191,36,0.4); }
+  .market-badge.both { color: var(--warn); border-color: rgba(245,158,11,0.4); }
+
+  /* tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,18,32,0.6);
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* table view */
+  .table-wrap {
+    padding: 24px 32px 64px;
+    overflow-x: auto;
+  }
+  table.companies {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+  }
+  table.companies th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  table.companies td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  table.companies tr.row-deleted td { opacity: 0.4; }
+  table.companies tr.row-star td { background: rgba(251,191,36,0.05); }
+  table.companies tr.row-target td { background: rgba(110,231,183,0.04); }
+  table.companies tr.row-partner td { background: rgba(192,132,252,0.05); }
+  table.companies tr:hover td { background: rgba(255,255,255,0.02); }
+  td.col-company {
+    min-width: 200px;
+    max-width: 260px;
+  }
+  td.col-company .name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  td.col-company a { color: var(--text); text-decoration: none; border-bottom: 1px dashed var(--border); }
+  td.col-company a:hover { color: var(--accent); border-color: var(--accent); }
+  td.col-company .row-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  td.col-overview { max-width: 420px; color: var(--muted); }
+  td.col-signal { max-width: 280px; color: var(--muted); font-size: 12px; }
+  td.col-actions { min-width: 230px; }
+  td.col-actions .actions { padding-top: 0; }
+  td.col-actions .btn { padding: 5px 6px; font-size: 11px; }
+  .status-dots {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .status-dots .dot {
+    width: 7px; height: 7px; border-radius: 999px;
+    display: inline-block;
+  }
+  .status-dots .dot.s-star { background: var(--gold); }
+  .status-dots .dot.s-target { background: var(--accent-2); }
+  .status-dots .dot.s-partner { background: var(--partner); }
+  main {
+    padding: 24px 32px 64px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s, border-color 0.15s, opacity 0.2s;
+    position: relative;
+  }
+  .card:hover { border-color: #3a4d75; transform: translateY(-2px); }
+  .card.starred { border-color: var(--gold); }
+  .card.targeted { border-color: var(--accent-2); }
+  .card.partnered { border-color: var(--partner); }
+  .card.starred.targeted, .card.starred.partnered, .card.targeted.partnered {
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+  }
+  .card.deleted { opacity: 0.32; filter: grayscale(0.7); }
+  .card.hidden { display: none; }
+  .status-strip {
+    display: flex;
+    gap: 3px;
+    position: absolute;
+    top: 0;
+    left: 14px;
+    right: 14px;
+    height: 3px;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .status-strip span { flex: 1; }
+  .status-strip .s-star { background: var(--gold); }
+  .status-strip .s-target { background: var(--accent-2); }
+  .status-strip .s-partner { background: var(--partner); }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .company {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .company a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+  }
+  .company a:hover { color: var(--accent); border-color: var(--accent); }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-end;
+    max-width: 60%;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .overview {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: var(--panel-2);
+    border-radius: 10px;
+    padding: 9px 11px;
+  }
+  .metric { font-size: 12px; }
+  .metric .label { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric .value { font-size: 13px; font-weight: 600; margin-top: 2px; }
+  .signal-row {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .signal-row b { color: var(--text); }
+  .actions {
+    display: flex;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 2px;
+  }
+  .btn {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 500;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #1f2b46; }
+  .btn.star.active { background: rgba(251,191,36,0.18); border-color: var(--gold); color: var(--gold); }
+  .btn.target.active { background: rgba(110,231,183,0.15); border-color: var(--accent-2); color: var(--accent-2); }
+  .btn.partner.active { background: rgba(192,132,252,0.18); border-color: var(--partner); color: var(--partner); }
+  .btn.delete.active { background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger); }
+  footer {
+    padding: 14px 32px 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  @media (max-width: 600px) {
+    header, .stats, main, footer { padding-left: 16px; padding-right: 16px; }
+    main { grid-template-columns: 1fr; }
+    .badges { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>GovMotion — Early Government Market Entrants</h1>
+    <div class="sub">100 technology companies entering or early in the federal / SLED government market. Surfaced from FedRAMP &amp; GovRAMP announcements, recent funding rounds, YC defense &amp; gov batches, GovTech 100 newcomers, DIU/SBIR awards, and federal/SLED hiring signals (founding-team and first-government-AE postings).</div>
+  </div>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Search company or solution…" />
+    <select id="filter">
+      <option value="all">All companies</option>
+      <option value="star">Starred</option>
+      <option value="target">Targets</option>
+      <option value="partner">Partners</option>
+      <option value="delete">Not Likely</option>
+      <option value="active">Active (likely)</option>
+      <option value="any">Any tagged (★ / Target / Partner)</option>
+    </select>
+    <select id="sort">
+      <option value="default">Default order</option>
+      <option value="name">A → Z</option>
+      <option value="status">Status (★ Keep Active Del)</option>
+    </select>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-view="cards">Cards</button>
+  <button class="tab" data-view="table">Table</button>
+</div>
+
+<div class="market-bar">
+  <span class="label">Market:</span>
+  <button class="pill active" data-market="all">All<span class="ct" id="ct-all">0</span></button>
+  <button class="pill" data-market="federal">Federal<span class="ct" id="ct-federal">0</span></button>
+  <button class="pill" data-market="sl">S&amp;L<span class="ct" id="ct-sl">0</span></button>
+  <button class="pill" data-market="both">Both<span class="ct" id="ct-both">0</span></button>
+</div>
+
+<div class="stats">
+  <span>Showing: <b id="count-total">0</b></span>
+  <span>★ Starred: <b id="count-star">0</b></span>
+  <span>Targets: <b id="count-target">0</b></span>
+  <span>Partners: <b id="count-partner">0</b></span>
+  <span>Not Likely: <b id="count-delete">0</b></span>
+  <span style="margin-left:auto"><a href="#" id="reset" style="color:var(--muted)">Reset all</a></span>
+</div>
+
+<main id="grid"></main>
+
+<div class="table-wrap" id="table-wrap" style="display:none">
+  <table class="companies">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Overview</th>
+        <th>Signal</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<footer>
+  Star / Keep / Delete state is saved to your browser only (localStorage). Revenue and employee figures are public-source estimates where exact disclosures are unavailable; treat as ranges for triage, not for diligence.
+</footer>
+
+<script>
+const COMPANIES = [
+  // --- FedRAMP / Compliance accelerators ---
+  { id:"knox", name:"Knox Systems", url:"https://www.knoxsystems.com",
+    overview:"Managed FedRAMP-authorized hosting platform that compresses cloud compliance from 16+ months to roughly 90 days. Has onboarded 20+ ISVs (Celonis, OutSystems, Procurement Sciences) and closed a $25M Series A led by B Capital in March 2026.",
+    revenue:"~$5–10M ARR (est.)", employees:"30–50",
+    signal:"Series A Mar 2026; hiring federal solutions engineers and DoD-cleared GTM",
+    tags:["FedRAMP","Series A","DoD"] },
+
+  { id:"archon", name:"Archon", url:"https://www.archonsec.com",
+    overview:"YC-backed FedRAMP accelerator that takes SaaS vendors to authorization in ~6 months instead of 16 and saves ~$1M per company. Positioned as the lower-cost, higher-velocity path into federal for ISVs.",
+    revenue:"~$1–3M ARR (est.)", employees:"8–15",
+    signal:"YC alum; founding federal compliance engineers and first AE posted",
+    tags:["FedRAMP","YC","Seed"] },
+
+  { id:"regscale", name:"RegScale", url:"https://www.regscale.com",
+    overview:"Compliance-as-code GRC platform automating FedRAMP, FISMA, and CMMC package generation with continuous controls monitoring. Achieved FedRAMP High In-Process at half typical cost and one-third typical time.",
+    revenue:"~$8–15M ARR (est.)", employees:"70–110",
+    signal:"FedRAMP High In Process; hiring federal CSMs and DoD-cleared SEs",
+    tags:["GRC","FedRAMP High","Series A"] },
+
+  { id:"secondfront", name:"Second Front Systems", url:"https://www.secondfront.com",
+    overview:"Game Warden is a managed DevSecOps PaaS that hosts SaaS at DoD Impact Levels IL4/IL5/IL6. Helps commercial software vendors get into the DoD stack without standing up their own enclave.",
+    revenue:"~$15–25M ARR (est.)", employees:"100–150",
+    signal:"Hiring multiple federal AEs and customer engineers post-Series C",
+    tags:["DoD","IL5","Series C"] },
+
+  // --- SLED operations / civic AI ---
+  { id:"polimorphic", name:"Polimorphic", url:"https://www.polimorphic.com",
+    overview:"AI chatbots, voice agents, CRM, and permitting/licensing software for state and local governments. Raised $18.6M Series A led by General Catalyst (Jan 2026) and is tripling sales + engineering headcount.",
+    revenue:"~$3–8M ARR (est.)", employees:"40–60",
+    signal:"Series A Jan 2026; first Head of Public Sector Sales and SLG AEs posted",
+    tags:["SLED","AI","Series A"] },
+
+  { id:"govwell", name:"GovWell", url:"https://govwell.com",
+    overview:"Modern OS for local government — permits, plan review, inspections, and licensing in one configurable platform. Serves 3,000+ processes for agencies across 28 states with a small founding team.",
+    revenue:"~$2–5M ARR (est.)", employees:"15–30",
+    signal:"Hiring founding AE for SLG mid-market; 2024 founded",
+    tags:["SLG","Permitting","Seed"] },
+
+  { id:"govstream", name:"Govstream.ai", url:"https://www.govstream.ai",
+    overview:"AI-native permitting copilot that streamlines intake, accelerates plan review, and reduces routine inquiry burden by ~30% in early SLG customers like Bellevue. Raised $3.6M seed in 2025, $4.9M total.",
+    revenue:"<$1M ARR (est.)", employees:"6–12",
+    signal:"Seed 2025; founding GTM and SLG customer success roles open",
+    tags:["SLG","AI","Seed"] },
+
+  { id:"govstudio", name:"Gov Studio", url:"https://govstudio.com",
+    overview:"Low-code AI compliance platform for short-term rental licensing and zoning enforcement, configurable to local code without custom development. Targets mid-size cities and counties with small staff.",
+    revenue:"~$0.5–2M ARR (est.)", employees:"5–15",
+    signal:"Early SLG pilots; first state-government AE role posted",
+    tags:["SLG","STR","Permitting"] },
+
+  { id:"civilized-ai", name:"Civilized AI", url:"https://civilized.ai",
+    overview:"AI agents that go beyond 311 — handling resident chat/SMS/email, CMS, knowledge bases, and complex municipal workflows. Closed a $2M seed in October 2025 led by Benson Capital.",
+    revenue:"<$1M ARR (est.)", employees:"4–10",
+    signal:"Seed Oct 2025; founding SLG sales + first city pilots live",
+    tags:["SLG","AI","Seed"] },
+
+  { id:"holly", name:"Holly", url:"https://www.hollyhires.com",
+    overview:"AI hiring platform for public-sector roles — sourcing, screening, and scheduling for cities and counties. Local governments covering ~1% of the U.S. population are already on the platform after a $2.2M seed.",
+    revenue:"~$0.5–1.5M ARR (est.)", employees:"6–12",
+    signal:"Seed 2025; expanding SLG CSMs and founding state-government AE",
+    tags:["SLG","HR Tech","Seed"] },
+
+  { id:"hazel", name:"Hazel", url:"https://www.hazel.com",
+    overview:"Automates the full government procurement process — RFP response, compliance review, and vendor onboarding — for SLED and federal buyers. Closed $500K pre-seed in 2025 with first SLED pilots underway.",
+    revenue:"Pre-revenue / pilot", employees:"4–8",
+    signal:"Pre-seed 2025; founding GTM hire posted; first SLED pilots",
+    tags:["Procurement","SLED","Pre-seed"] },
+
+  { id:"permitflow", name:"PermitFlow", url:"https://www.permitflow.com",
+    overview:"Permit preparation, submission, and tracking platform serving developers and contractors filing with thousands of U.S. agencies. YC alum that picked up a $31M Series A in 2025 to expand jurisdiction coverage.",
+    revenue:"~$8–15M ARR (est.)", employees:"60–100",
+    signal:"Series A 2025; hiring SLG partnerships and gov-data engineers",
+    tags:["Permitting","YC","Series A"] },
+
+  // --- Procurement / capture / contracting intelligence ---
+  { id:"starbridge", name:"Starbridge", url:"https://www.starbridge.ai",
+    overview:"Public-sector deal intelligence platform that turns budgets, agendas, and contracts into pursuable opportunities. 160+ enterprise public-sector sales teams use it after a $42M Series A from Craft Ventures (Oct 2025).",
+    revenue:"~$10–18M ARR (est.)", employees:"50–80",
+    signal:"$42M Series A Oct 2025; building first federal-named segment",
+    tags:["SLED","AI","Series A"] },
+
+  { id:"procurement-sciences", name:"Procurement Sciences", url:"https://www.procurementsciences.com",
+    overview:"AI agents for federal capture and proposal — bid/no-bid, technical drafting, and compliance grading on top of SAM.gov, GovWin, and contract history. Entered FedRAMP authorization via Knox in 2025.",
+    revenue:"~$3–6M ARR (est.)", employees:"30–55",
+    signal:"FedRAMP via Knox 2025; first federal AEs and DoD capture leads posted",
+    tags:["Capture","AI","FedRAMP In Process"] },
+
+  { id:"civic-marketplace", name:"Civic Marketplace", url:"https://www.civicmarketplace.com",
+    overview:"Procurement marketplace that lets local governments share approved vendors and cooperative contracts across categories like office, maintenance, and AI. $3M seed in late 2024 from Kindred Capital and angels.",
+    revenue:"<$1M ARR (est.)", employees:"5–10",
+    signal:"Seed 2024; founding U.S. GTM hire posted in 2025",
+    tags:["Procurement","SLG","Seed"] },
+
+  { id:"candor", name:"Candor", url:"https://www.candorai.com",
+    overview:"AI that helps startups and SMBs win non-dilutive federal funding — SBIR, STTR, OTAs, BAAs — by collapsing application drafting from weeks to days. YC W25 with $18M raised across three rounds.",
+    revenue:"Early ARR (<$1M)", employees:"2–6",
+    signal:"YC W25; founding federal BD role open",
+    tags:["SBIR","YC","Defense"] },
+
+  { id:"vulcan", name:"Vulcan Technologies", url:"https://www.vulcantech.ai",
+    overview:"Frontier LLM platform for regulatory implementation — turning bills and rules into structured intelligence for agencies, policy shops, and legal teams. YC S25 with a $10.9M seed led by General Catalyst.",
+    revenue:"Pre-revenue / pilot", employees:"5–10",
+    signal:"$10.9M seed late 2025; first federal policy SMEs and gov AE recruited",
+    tags:["AI","Regulatory","YC"] },
+
+  { id:"1000more", name:"1000 MORE", url:"https://www.1000more.com",
+    overview:"AI workflow agents that ingest government records — court filings, FOIA, council minutes — and turn them into structured, queryable data for agencies, AG offices, and watchdogs. YC-backed.",
+    revenue:"Pre-revenue / pilot", employees:"3–6",
+    signal:"YC 2025; founding SLG BD role and early federal pilot conversations",
+    tags:["YC","SLG","AI Agents"] },
+
+  // --- Defense data / acquisition ---
+  { id:"obviant", name:"Obviant", url:"https://www.obviant.com",
+    overview:"Data intelligence platform for defense acquisition, contracting, and budgeting — turning DoD spending data into actionable analytics. Raised $7.1M in 2025 and won a $99M DIU production contract.",
+    revenue:"~$2–5M ARR (est.)", employees:"20–35",
+    signal:"DIU contract Nov 2025; just named first VP of National Security",
+    tags:["DoD","DIU","Seed"] },
+
+  { id:"omnisync", name:"OmniSync", url:"https://www.omnisync.com",
+    overview:"AI/NLP marketplace and proposal platform connecting federal innovation programs with non-traditional vendors. Active contracts with the Department of Energy, U.S. Air Force, and OUSD R&E.",
+    revenue:"~$3–6M ARR (est.)", employees:"30–60",
+    signal:"Federal contract wins 2024–25; hiring federal capture leads",
+    tags:["AI","Federal","Marketplace"] },
+
+  // --- Defense tech (newer entrants / scaling) ---
+  { id:"scout-ai", name:"Scout AI", url:"https://scoutco.ai",
+    overview:"Frontier lab building Fury — a robotic foundation model for unmanned warfare across air, ground, and surface platforms. $100M Series A in April 2026 (Align + Draper) after a $15M seed and two DoD contracts.",
+    revenue:"~$11M contracts to date", employees:"~34",
+    signal:"Series A Apr 2026; hiring autonomy researchers and DoD-cleared field engineers",
+    tags:["Defense","AI","Series A"] },
+
+  { id:"blue-water", name:"Blue Water Autonomy", url:"https://www.blw.ai",
+    overview:"Designs and builds autonomous warships for the U.S. Navy from a Boston team of Navy veterans plus Amazon Robotics and iRobot alumni. $50M Series A led by GV in 2025 brought total raised to $64M.",
+    revenue:"Pre-revenue / pilot", employees:"30–50",
+    signal:"Conrad Shipyard USV deal Sep 2025; founding government BD recruited",
+    tags:["Defense","USV","Series A"] },
+
+  { id:"vannevar", name:"Vannevar Labs", url:"https://www.vannevarlabs.com",
+    overview:"Turns foreign communications into real-time intelligence for the military through its Decrypto product. Won a ~$99M DoD production contract to scale deployment across the department.",
+    revenue:"~$25–40M run-rate (est.)", employees:"180–250",
+    signal:"Production contract 2025; aggressive federal sales hiring",
+    tags:["Defense","Intel","Growth"] },
+
+  { id:"castelion", name:"Castelion", url:"https://www.castelion.com",
+    overview:"Vertically integrated developer of affordable hypersonic test and strike weapons (Blackbeard). $100M Series A in Feb 2025 plus a $350M Series B in Dec 2025 to scale propulsion, avionics, and guidance in-house.",
+    revenue:"Pre-program revenue", employees:"100–200",
+    signal:"Series B Dec 2025; first DoD program-of-record pursuits underway",
+    tags:["Defense","Hypersonics","Series B"] },
+
+  { id:"hadrian", name:"Hadrian", url:"https://www.hadrian.co",
+    overview:"AI-driven contract manufacturing for defense and space precision parts. $260M Series C in July 2025 (Founders Fund, Lux) funding a 270,000 sq ft Arizona factory and ~350 production jobs.",
+    revenue:"~$30–60M (est.)", employees:"300–450",
+    signal:"Factory 3 opening 2026; expanding federal program management team",
+    tags:["Defense","Manufacturing","Series C"] },
+
+  { id:"chaos-industries", name:"Chaos Industries", url:"https://www.chaosindustries.com",
+    overview:"Distributed radar and electronic-warfare sensing systems for contested environments. Valued at ~$4.5B after recent rounds and pushing into program-of-record DoD work as a non-traditional prime.",
+    revenue:"~$20–40M (est.)", employees:"200–350",
+    signal:"Active DoD contract pursuits; hiring cleared program managers",
+    tags:["Defense","Radar","Growth"] },
+
+  { id:"true-anomaly", name:"True Anomaly", url:"https://www.trueanomaly.space",
+    overview:"Builds the Jackal autonomous orbital vehicle and Mosaic command-and-control software for space security missions with the Space Force. Closed ~$600M across recent rounds to scale production.",
+    revenue:"Early program revenue", employees:"200–300",
+    signal:"Space Force contract growth 2025; recruiting federal capture and program SMEs",
+    tags:["Space","Defense","Growth"] },
+
+  { id:"saronic", name:"Saronic Technologies", url:"https://www.saronic.com",
+    overview:"Designs and builds autonomous surface vessels for the U.S. Navy and allies. Raised $1.75B in early 2026 at a $9.25B valuation to launch Port Alpha, a next-gen shipyard for unmanned vessels.",
+    revenue:"Early program revenue", employees:"300–500",
+    signal:"Massive 2026 round; aggressively hiring federal/Navy program leads",
+    tags:["Defense","USV","Growth"] },
+
+  { id:"epirus", name:"Epirus", url:"https://www.epirusinc.com",
+    overview:"High-power microwave Leonidas systems for counter-drone and counter-electronics missions. ~$450M raised to date as it ships systems to the U.S. Army and partner militaries.",
+    revenue:"~$50–80M (est.)", employees:"250–400",
+    signal:"Army production growth 2025; federal sales expansion",
+    tags:["Defense","C-UAS","Growth"] },
+
+  { id:"skydio", name:"Skydio", url:"https://www.skydio.com",
+    overview:"Autonomous drones for U.S. public safety, DoD, and infrastructure customers, with the X10D platform for tactical units. Raised $230M at a $2.2B valuation in 2025 amid growing DoD volumes.",
+    revenue:"~$150–200M (est.)", employees:"700–900",
+    signal:"DoD volume growth 2025; expanding federal sales overlay",
+    tags:["Drones","Defense","Growth"] },
+
+  // --- GovTech 100 2026 new entrants ---
+  { id:"darwinai", name:"DarwinAI (Gov)", url:"https://www.darwinai.gov",
+    overview:"AI-assisted document and case automation for state and local agencies — eligibility, licensing, and inspections. Named to the 2026 GovTech 100 as a first-time entrant after early traction in three states.",
+    revenue:"~$1–3M ARR (est.)", employees:"15–30",
+    signal:"GovTech 100 newcomer 2026; first federal-civilian AE role posted",
+    tags:["SLG","AI","GT100"] },
+
+  { id:"forcemetrics", name:"ForceMetrics", url:"https://www.forcemetrics.com",
+    overview:"Public-safety data platform that unifies CAD, RMS, and 911 call data for officers and dispatchers, surfacing context in real time. GovTech 100 2026 new entrant after expanding to multiple state DOC and city PD customers.",
+    revenue:"~$2–5M ARR (est.)", employees:"25–45",
+    signal:"GovTech 100 newcomer 2026; growing SLG sales team",
+    tags:["Public Safety","SLG","GT100"] },
+
+  { id:"gravity", name:"Gravity", url:"https://www.gravity.gov",
+    overview:"AI-native back-office automation for government finance and procurement workflows — PO generation, vendor management, and invoice reconciliation. Joined the 2026 GovTech 100 in its first year.",
+    revenue:"~$1–3M ARR (est.)", employees:"15–25",
+    signal:"GovTech 100 newcomer 2026; hiring first federal AE",
+    tags:["SLG","AI","GT100"] },
+
+  { id:"just-appraised", name:"Just Appraised", url:"https://www.justappraised.com",
+    overview:"AI co-pilot for county assessor offices — automating deed processing, property splits, and exemption review. GovTech 100 2026 new entrant after rapid adoption among mid-size counties.",
+    revenue:"~$2–4M ARR (est.)", employees:"20–35",
+    signal:"GovTech 100 newcomer 2026; expanding SLG implementation team",
+    tags:["SLG","Property Tax","GT100"] },
+
+  { id:"klir", name:"Klir", url:"https://www.klir.com",
+    overview:"Water-utility operating system that unifies compliance, asset, and customer data for municipal water providers. Named to the 2026 GovTech 100 in its first appearance.",
+    revenue:"~$5–10M ARR (est.)", employees:"50–80",
+    signal:"GovTech 100 newcomer 2026; recruiting U.S. utility AEs",
+    tags:["Utilities","SLG","GT100"] },
+
+  { id:"peregrine", name:"Peregrine", url:"https://www.peregrine.io",
+    overview:"Data integration and analytics platform for public-safety and government agencies — pulling siloed systems into a single investigative workspace. Joined the GovTech 100 in 2026 after major city wins.",
+    revenue:"~$15–25M ARR (est.)", employees:"100–150",
+    signal:"GovTech 100 newcomer 2026; growing federal pilots",
+    tags:["Public Safety","Data","GT100"] },
+
+  { id:"plum-identity", name:"Plum Identity", url:"https://www.plumidentity.com",
+    overview:"Identity verification and fraud prevention for government benefits programs — unemployment, SNAP, Medicaid. Named to the 2026 GovTech 100 after expanding to multiple state workforce agencies.",
+    revenue:"~$3–6M ARR (est.)", employees:"30–55",
+    signal:"GovTech 100 newcomer 2026; federal civilian sales hiring",
+    tags:["Identity","SLG","GT100"] },
+
+  { id:"via", name:"Via Transportation (Gov)", url:"https://www.ridewithvia.com",
+    overview:"Transit and paratransit software powering on-demand public transportation for cities, counties, and transit authorities. Joined the 2026 GovTech 100 with growing North American agency footprint.",
+    revenue:"$150M+ (est.)", employees:"800–1,000",
+    signal:"GovTech 100 newcomer 2026; federal grant-funded transit expansion",
+    tags:["Transit","SLG","GT100"] },
+
+  { id:"citydata", name:"CityData.AI", url:"https://www.citydata.ai",
+    overview:"AI-driven location and mobility analytics for cities and tourism boards — visitation, foot traffic, and economic-impact insights. Named to the 2026 GovTech 100 after expanding municipal customer base.",
+    revenue:"~$3–6M ARR (est.)", employees:"25–40",
+    signal:"GovTech 100 2026; building first federal-civilian pilots",
+    tags:["SLG","Data","GT100"] },
+
+  { id:"neumo", name:"Neumo", url:"https://neumo.com",
+    overview:"AI workflow platform purpose-built for state and local procurement, contracting, and grants management. Named to the 2026 GovTech 100 with active SLG pilots in multiple regions.",
+    revenue:"~$1–3M ARR (est.)", employees:"10–20",
+    signal:"GovTech 100 2026; founding SLG AE and customer success roles",
+    tags:["SLG","Procurement","GT100"] },
+
+  // --- Public benefits / civic services ---
+  { id:"nava", name:"Nava PBC", url:"https://www.navapbc.com",
+    overview:"Public-benefit corporation that builds and improves digital services for federal and state agencies including Medicare, VA, and unemployment systems. Partner on Center for Civic Futures' AI benefits initiatives.",
+    revenue:"~$60–90M (est.)", employees:"300–450",
+    signal:"AI benefits cohort 2025; expanding federal AI labs team",
+    tags:["Federal","Civic","Services"] },
+
+  { id:"publicinput", name:"PublicInput", url:"https://publicinput.com",
+    overview:"Community engagement and constituent feedback platform for cities, counties, and transportation agencies. Named to the GovTech 100 for the third consecutive year and expanding into federal civic engagement.",
+    revenue:"~$8–15M ARR (est.)", employees:"50–90",
+    signal:"GT100 2024–26; first federal account exec role posted in 2025",
+    tags:["Engagement","SLG","GT100"] },
+
+  { id:"simpligov", name:"SimpliGov", url:"https://www.simpligov.com",
+    overview:"No-code government forms and workflow automation platform for state and local agencies. 6th consecutive GovTech 100 list appearance, with growing federal civilian pilots.",
+    revenue:"~$10–20M ARR (est.)", employees:"50–100",
+    signal:"GT100 6th year; first federal civilian sales lead recruited",
+    tags:["Workflow","SLG","GT100"] },
+
+  // --- Public safety / 911 / records ---
+  { id:"carbyne", name:"Carbyne", url:"https://carbyne.com",
+    overview:"Cloud-native 911 platform delivering caller location, live video, and AI dispatch assistance to public-safety answering points. Expanding from regional PSAPs to statewide deployments.",
+    revenue:"~$40–70M (est.)", employees:"300–450",
+    signal:"State 911 wins 2025; federal civilian pursuits underway",
+    tags:["Public Safety","911","Growth"] },
+
+  { id:"mark43", name:"Mark43", url:"https://mark43.com",
+    overview:"Cloud-native CAD, RMS, and analytics for police, fire, and EMS agencies. Continues to scale into mid-market law enforcement after major city wins like Atlanta and Seattle.",
+    revenue:"~$80–120M (est.)", employees:"400–600",
+    signal:"Federal civilian pilots 2025; expanding SLED partnership team",
+    tags:["Public Safety","RMS","Growth"] },
+
+  { id:"rangeforce", name:"RangeForce", url:"https://www.rangeforce.com",
+    overview:"Hands-on cyber range and skills platform used by DoD components and federal civilian SOCs. Recently expanded its federal channel post-FedRAMP roadmap commitment.",
+    revenue:"~$15–25M ARR (est.)", employees:"100–150",
+    signal:"FedRAMP roadmap announced; hiring federal cyber AEs",
+    tags:["Cyber","Federal","Growth"] },
+
+  // --- Weather / climate / sensing ---
+  { id:"tomorrow", name:"Tomorrow.io", url:"https://www.tomorrow.io",
+    overview:"Weather intelligence platform combining proprietary satellites with ML forecasting. Awarded U.S. Air Force and DoD contracts and pursuing FedRAMP for broader civilian agency coverage.",
+    revenue:"~$60–90M (est.)", employees:"300–500",
+    signal:"Federal contract wins 2024–25; FedRAMP in flight",
+    tags:["Weather","Defense","Growth"] },
+
+  { id:"saildrone", name:"Saildrone", url:"https://www.saildrone.com",
+    overview:"Wind- and solar-powered uncrewed surface vehicles supplying ocean intelligence to NOAA, the U.S. Navy, and allied militaries. Growing from research deployments into persistent maritime ISR contracts.",
+    revenue:"~$70–110M (est.)", employees:"250–400",
+    signal:"Navy and NOAA contract growth 2025; expanding federal program staff",
+    tags:["Maritime","Defense","Growth"] },
+
+  // --- AI / regulated workloads expanding into gov ---
+  { id:"primer", name:"Primer", url:"https://primer.ai",
+    overview:"Mission-focused LLM platform for defense and intelligence — entity extraction, summarization, and analyst copilots running in classified environments. Pivot to AI-native defense well underway.",
+    revenue:"~$40–70M (est.)", employees:"200–300",
+    signal:"DoD/IC contract growth 2025; expanding mission engineering team",
+    tags:["AI","Defense","Growth"] },
+
+  { id:"rebellion", name:"Rebellion Defense", url:"https://www.rebelliondefense.com",
+    overview:"Software-first defense company building Iris (computer vision), Nova (operational planning), and Atlas (digital engineering) for U.S. and allied defense customers. Reorganized in 2024–25 around AI mission systems.",
+    revenue:"~$30–60M (est.)", employees:"200–350",
+    signal:"Refocused mission AI products 2025; hiring cleared field engineers",
+    tags:["AI","Defense","Growth"] },
+
+  { id:"stoke-space", name:"Stoke Space", url:"https://www.stokespace.com",
+    overview:"Fully reusable Nova rocket designed for responsive launch — pursuing Space Force / NSSL on-ramp opportunities. Closed a $260M Series C in early 2025 to fund first stage development.",
+    revenue:"Pre-launch revenue", employees:"250–400",
+    signal:"NSSL Lane 1 on-ramp pursuit 2025; federal launch BD hiring",
+    tags:["Space","Defense","Series C"] },
+
+  // --- Additional SLG / city AI ---
+  { id:"madison-ai", name:"Madison AI", url:"https://www.madisonai.com",
+    overview:"Builds a custom AI for each local government from decades of its own records and enterprise systems — drafting staff reports, zoning verification letters, and complete RFPs. Raised $3.5M seed in late 2025 with ~50 customer deployments in 18 months.",
+    revenue:"~$1–3M ARR (est.)", employees:"15–25",
+    signal:"Seed Dec 2025; 'Most Innovative' at 2025 State of GovTech PitchFest; SLG AE hiring",
+    tags:["SLG","AI","Seed"] },
+
+  { id:"syncurrent", name:"Syncurrent", url:"https://www.syncurrent.com",
+    overview:"AI platform that identifies federal and state grants for local and tribal governments and helps draft applications. Live with 10 Michigan jurisdictions including the Sault Ste. Marie Tribe of Chippewa Indians via the MI Funding Hub integration.",
+    revenue:"<$1M ARR (est.)", employees:"6–12",
+    signal:"MML/MI-LEO partnership July 2025; founding national SLG sales role posted",
+    tags:["SLG","Grants","Seed"] },
+
+  { id:"swiftbuild", name:"Swiftbuild.ai (SwiftGov)", url:"https://swiftbuild.ai",
+    overview:"AI tools that let city and county governments update zoning codes, manage plan reviews, and approve permits in days. SwiftGov reduced zoning review from ~30 days to two in Hernando County, FL across 6,000+ post-hurricane rebuilds.",
+    revenue:"~$1–3M ARR (est.)", employees:"10–20",
+    signal:"Federal homebuilding push tailwind 2025; first state-government AE recruited",
+    tags:["SLG","Housing","AI"] },
+
+  { id:"emulate-cities", name:"Emulate Cities", url:"https://www.emulatecities.com",
+    overview:"AI completeness and accuracy checker for municipal housing permits — flags incomplete submittals before they reach staff and frees up planner review time. Partnered with the Tahoe Regional Planning Agency for early production deployments.",
+    revenue:"<$1M ARR (est.)", employees:"4–10",
+    signal:"TRPA partnership 2025; founding SLG AE and ops engineers open",
+    tags:["SLG","Housing","Seed"] },
+
+  { id:"infilla", name:"Infilla", url:"https://www.infilla.com",
+    overview:"Permitting copilot for municipal planning and building departments that enforces local code consistency at intake. Cleared a 2–3 month permit backlog in Sonoma County and saves staff ~30 hours per week of intake labor.",
+    revenue:"<$1M ARR (est.)", employees:"6–12",
+    signal:"Sonoma County production 2025; founding SLG sales hire posted",
+    tags:["SLG","Permitting","Seed"] },
+
+  // --- YC W25/S25 defense + gov ---
+  { id:"perseus", name:"Perseus Defense", url:"https://www.perseusdefense.com",
+    overview:"15-inch mini-missiles for detecting, identifying, and destroying hostile drones at <$5K per shot. YC S25 with a $6M seed, founded by a NASA Mars helicopter lead and a Boeing/ONR swarm-robotics researcher.",
+    revenue:"Pre-revenue / pilot", employees:"10–20",
+    signal:"YC S25; $6M seed late 2025; HQ in Buda, TX; cleared engineers being hired",
+    tags:["Defense","C-UAS","YC"] },
+
+  { id:"juxta", name:"Juxta", url:"https://www.juxta.io",
+    overview:"Universal Positioning System — GPS-level (or better) accuracy with no new hardware, minimal internet, and unjammable operation using synthetic fingerprinting and custom ML. Defense use cases include personnel/asset tracking without emissions.",
+    revenue:"Pre-revenue / pilot", employees:"5–10",
+    signal:"YC S25; defense pilot conversations underway",
+    tags:["Defense","Navigation","YC"] },
+
+  { id:"usul", name:"Usul", url:"https://usul.com",
+    overview:"AI platform that monitors ~$8T of annual government spending across 60+ countries and instantly matches companies to relevant contracts, then drafts compliant proposals. YC S24 with $3.3M raised from Scout Ventures, YC, and Steve Blank.",
+    revenue:"~$1–2M ARR (est.)", employees:"5–10",
+    signal:"YC S24; founding federal capture engineer + first AE posted",
+    tags:["Capture","YC","Defense"] },
+
+  // --- Defense tech additions ---
+  { id:"allen-control", name:"Allen Control Systems", url:"https://www.allencontrolsystems.com",
+    overview:"Robotic gun turrets — the Bullfrog — that mount M240s and use computer vision to detect and engage hostile drones. $30M Series A led by Craft Ventures and selected by U.S. Army Applications Lab for combat-vehicle integration.",
+    revenue:"~$3–6M (est.)", employees:"40–80",
+    signal:"Series A Mar 2025; AAL CVI selection Dec 2025; cleared ME and program staff hiring",
+    tags:["Defense","C-UAS","Series A"] },
+
+  { id:"mach", name:"Mach Industries", url:"https://www.machindustries.com",
+    overview:"Jet-powered cruise missiles (Viper) and VTOL strike systems built in pop-up factories targeting thousands of units per month at <$100K/unit. Grew from 20 to 140 employees in under a year and raised a $100M Series B at a $470M valuation.",
+    revenue:"~$5–15M (est.)", employees:"~140",
+    signal:"Series B mid-2025; first U.S. Army contract; recruiting cleared production engineers",
+    tags:["Defense","Munitions","Series B"] },
+
+  { id:"k2-space", name:"K2 Space", url:"https://www.k2space.com",
+    overview:"Builder of the Mega Class satellite bus for unprecedented payload-to-orbit economics, targeting Space Force and intelligence-community customers. Raised $250M at a $3B valuation in December 2025.",
+    revenue:"Pre-launch revenue", employees:"150–250",
+    signal:"$250M round Dec 2025; first SDA/Space Force contract pursuits underway",
+    tags:["Space","Defense","Growth"] },
+
+  { id:"apex-space", name:"Apex Space", url:"https://www.apexspace.com",
+    overview:"Designs and manufactures standardized satellite buses (Aries, Nova, Comet) for national-security and commercial missions. Hit unicorn status in 2025 amid Space Force contract growth.",
+    revenue:"Early program revenue", employees:"150–250",
+    signal:"Unicorn 2025; first national-security program wins; growing federal program staff",
+    tags:["Space","Defense","Growth"] },
+
+  { id:"impulse-space", name:"Impulse Space", url:"https://www.impulsespace.com",
+    overview:"In-space mobility company building Mira (LEO) and Helios (cislunar/GEO) transfer vehicles for rapid satellite repositioning. Targeting DoD responsive-space and Space Force mission demands.",
+    revenue:"Early program revenue", employees:"200–350",
+    signal:"DoD contract growth 2025; expanding national-security BD",
+    tags:["Space","Defense","Series C"] },
+
+  { id:"portal-space", name:"Portal Space Systems", url:"https://www.portalspace.com",
+    overview:"Maneuverable satellite platform built on solar-thermal propulsion for high delta-V missions — supporting Space Force tactically responsive space ops. Closed a $50M Series A in 2025.",
+    revenue:"Pre-revenue / pilot", employees:"40–80",
+    signal:"Series A 2025; first Space Force contract conversations",
+    tags:["Space","Defense","Series A"] },
+
+  { id:"orbital-ops", name:"Orbital Operations", url:"https://www.orbital-operations.com",
+    overview:"Builds reusable high-thrust space vehicles to defend satellites using cryo-managed propulsion. Selected through a DIU/Space Force commercial solutions opening in winter 2025.",
+    revenue:"Pre-revenue / pilot", employees:"15–40",
+    signal:"DIU selection winter 2025; first cleared engineering hires",
+    tags:["Space","Defense","Seed"] },
+
+  { id:"persona-ai", name:"Persona AI", url:"https://www.personaai.com",
+    overview:"Humanoid robots for defense, energy, and industrial work, founded in 2024 by the former lead of NASA's Valkyrie program. Secured $4M+ seed funding and is targeting DoD shipyard and depot use cases.",
+    revenue:"Pre-revenue / pilot", employees:"15–30",
+    signal:"Seed 2024–25; founding federal partnerships hire posted",
+    tags:["Defense","Robotics","Seed"] },
+
+  { id:"helsing", name:"Helsing (US)", url:"https://helsing.ai",
+    overview:"European defense AI building autonomous decision systems, swarming strike drones (HX-2), and undersea AI. Raised €600M+ Series D mid-2025 and stood up a U.S. office to pursue allied DoD programs.",
+    revenue:"~$50–80M (est.)", employees:"500–700",
+    signal:"U.S. office stood up 2025; recruiting cleared U.S. defense AEs",
+    tags:["Defense","AI","Series D"] },
+
+  { id:"quantum-systems", name:"Quantum-Systems", url:"https://quantum-systems.com",
+    overview:"German maker of dual-use VTOL ISR drones (Vector, Trinity Pro) — entered the U.S. market with a Dallas facility to pursue Army TRV and SLED public-safety programs. Hit unicorn status in 2025.",
+    revenue:"~$70–110M (est.)", employees:"400–600",
+    signal:"U.S. expansion 2025; first U.S. Army contract; hiring SLG public-safety AEs",
+    tags:["Defense","Drones","Unicorn"] },
+
+  { id:"destinus", name:"Destinus", url:"https://www.destinus.com",
+    overview:"Hypersonic logistics aircraft and long-range loitering munitions — expanding from European programs into U.S. partnerships for allied munitions production. Raised $50M+ in 2025.",
+    revenue:"Pre-revenue / pilot", employees:"200–350",
+    signal:"U.S. partnerships forming 2025; cleared U.S. engineering roles opening",
+    tags:["Defense","Hypersonics","Growth"] },
+
+  // --- Federal capture / contract intelligence ---
+  { id:"govly", name:"Govly", url:"https://www.govly.com",
+    overview:"Federal-reseller and contract-intelligence platform that lets OEMs and channel partners track contract vehicles, BPAs, and customer demand in real time. Closed a Series A in 2025 with growing federal channel adoption.",
+    revenue:"~$5–10M ARR (est.)", employees:"50–80",
+    signal:"Series A 2025; federal channel CSMs and AEs hiring",
+    tags:["Federal","Channel","Series A"] },
+
+  { id:"distyl", name:"Distyl AI", url:"https://www.distyl.ai",
+    overview:"Applied-AI services firm delivering OpenAI-powered solutions inside regulated federal and Fortune 100 environments. Stood up a federal practice in 2024 and is recruiting cleared engineers for DoD and IC engagements.",
+    revenue:"~$30–60M (est.)", employees:"150–250",
+    signal:"Federal practice stood up 2024–25; cleared engineering hiring",
+    tags:["AI","Federal","Growth"] },
+
+  { id:"latent-ai", name:"Latent AI", url:"https://www.latentai.com",
+    overview:"Edge-AI optimization platform (LEIP) that compresses and deploys ML models on tactical hardware for DoD, IC, and federal civilian missions. Multiple SBIR Phase III awards and AFWERX engagements.",
+    revenue:"~$8–15M (est.)", employees:"50–80",
+    signal:"AFWERX Phase III 2025; cleared MLOps engineers hiring",
+    tags:["Defense","Edge AI","SBIR"] },
+
+  { id:"govini", name:"Govini", url:"https://www.govini.com",
+    overview:"Decision-science platform (Ark) used by DoD program offices to model supply chain, acquisition, and budget decisions. Expanding from DoD into federal civilian acquisition.",
+    revenue:"~$50–80M (est.)", employees:"250–400",
+    signal:"Federal civilian expansion 2025; cleared analysts and AEs hiring",
+    tags:["Defense","Data","Growth"] },
+
+  { id:"bidscale", name:"Bidscale", url:"https://www.bidscale.com",
+    overview:"AI capture and proposal copilot that ingests SAM.gov, GovWin, and customer history to generate Section L/M-compliant drafts. Growing among mid-tier federal integrators as a Shipley-augmenting platform.",
+    revenue:"~$3–6M ARR (est.)", employees:"30–55",
+    signal:"Series A round in flight 2025; founding federal civilian AE posted",
+    tags:["Capture","AI","Federal"] },
+
+  { id:"granted-ai", name:"Granted AI", url:"https://grantedai.com",
+    overview:"AI grant discovery and drafting platform for startups pursuing SBIR, STTR, and federal R&D awards. Public guides covering DHS, Pentagon AI, and Public Benefit Innovation Fund have drawn early SMB traction.",
+    revenue:"<$1M ARR (est.)", employees:"5–10",
+    signal:"Early ARR 2025; founding GTM hire posted",
+    tags:["SBIR","AI","Seed"] },
+
+  // --- Federal civilian / agency modernization ---
+  { id:"empower-ai", name:"Empower AI", url:"https://www.empower.ai",
+    overview:"Federal AI services and modernization firm that won a $45M task order to modernize IT infrastructure for U.S. military treatment facilities. Pivoting from staff aug toward AI-led IT modernization.",
+    revenue:"~$200M+ (est.)", employees:"1,200–1,800",
+    signal:"$45M MHS task order 2025; expanding federal AI delivery practice",
+    tags:["Federal","Health","Services"] },
+
+  { id:"hayden-ai", name:"Hayden AI", url:"https://www.hayden.ai",
+    overview:"AI-powered traffic enforcement for transit agencies — automated bus-lane and bus-stop violation detection deployed in NYC, Washington Metro, and other major systems. Federal/state grant-funded SLG expansion.",
+    revenue:"~$30–60M (est.)", employees:"150–250",
+    signal:"Multi-state SLG expansion 2025; hiring state-government AEs",
+    tags:["SLG","Transit","Growth"] },
+
+  { id:"glydways", name:"Glydways", url:"https://www.glydways.com",
+    overview:"Autonomous on-demand transit pods that run on dedicated narrow guideways, sold to city DOTs and airports as a federally-funded transit-alternative. Raised $56M Series B and signed early projects in Contra Costa and Atlanta.",
+    revenue:"Pre-program revenue", employees:"80–140",
+    signal:"Series B 2024–25; FTA-funded program pursuits and SLG sales hiring",
+    tags:["SLG","Transit","Series B"] },
+
+  { id:"cleargov", name:"ClearGov", url:"https://www.cleargov.com",
+    overview:"Budgeting, transparency, and capital planning software for cities, school districts, and special-purpose agencies. Continues to scale into mid-market SLG after multiple GovTech 100 appearances.",
+    revenue:"~$20–35M ARR (est.)", employees:"100–180",
+    signal:"GT100 multi-year; growing federal civilian budget pursuits",
+    tags:["SLG","Finance","Growth"] },
+
+  // --- Defense data / telecom / autonomy ---
+  { id:"aalyria", name:"Aalyria", url:"https://www.aalyria.com",
+    overview:"Spun out of Google with a hyperfast software-defined networking stack (Spacetime) for satellite, aerial, and terrestrial mesh networks. Won a Space Force contract worth up to $1.6B over five years to model orbital telecom.",
+    revenue:"~$15–30M (est.)", employees:"60–100",
+    signal:"Space Force IDIQ; recruiting cleared telecom engineers",
+    tags:["Space","Telecom","Defense"] },
+
+  { id:"leolabs", name:"LeoLabs", url:"https://leolabs.space",
+    overview:"Global radar network for low-earth-orbit space domain awareness — supports U.S. Space Force, allied space commands, and commercial satellite operators. Closed a $200M+ Series C and growing federal sensing programs.",
+    revenue:"~$40–70M (est.)", employees:"200–300",
+    signal:"USSF contracts growth 2025; federal program management hires",
+    tags:["Space","Defense","Series C"] },
+
+  { id:"loft-orbital", name:"Loft Orbital", url:"https://www.loftorbital.com",
+    overview:"Satellite-as-a-service operator hosting customer payloads on standardized buses — supports SDA, NRO, and allied national-security missions. Raised $170M Series C in 2025.",
+    revenue:"~$50–80M (est.)", employees:"150–250",
+    signal:"Series C 2025; expanding national-security program staff",
+    tags:["Space","Defense","Series C"] },
+
+  { id:"episci", name:"EpiSci", url:"https://www.episci.com",
+    overview:"Autonomous decision software for crewed-uncrewed teaming, air-to-air autonomy, and DARPA ACE program flight tests. Building TacticalAI for fighter jets and counter-drone platforms.",
+    revenue:"~$10–20M (est.)", employees:"60–100",
+    signal:"DARPA / AFRL contract growth 2025; cleared autonomy researchers hiring",
+    tags:["Defense","Autonomy","DARPA"] },
+
+  { id:"beacon-ai", name:"Beacon AI", url:"https://www.beacon.ai",
+    overview:"AI flight copilot and aviation autonomy stack for commercial aviation and DoD platforms. Building toward partial pilot-relief capabilities under FAA pathway with growing DoD interest.",
+    revenue:"~$3–8M (est.)", employees:"30–60",
+    signal:"DoD pilot contracts 2025; recruiting cleared aerospace engineers",
+    tags:["Defense","Aviation","Series A"] },
+
+  // --- AI for federal civilian / chatbots ---
+  { id:"foundation-civic", name:"Foundation Civic AI", url:"https://foundationcivic.ai",
+    overview:"Open foundation models and toolkits fine-tuned for civic and constituent service workloads — chat, intake, and translation across 311 and benefits offices. Operates as a public-benefit oriented stack adopted by city pilots.",
+    revenue:"Pre-revenue / grant-funded", employees:"5–10",
+    signal:"City pilot launches 2025; founding partnerships hire posted",
+    tags:["SLG","AI","Civic"] },
+
+  // --- Public safety / records / first responders ---
+  { id:"first-due", name:"First Due", url:"https://www.firstduesizeup.com",
+    overview:"All-in-one fire-and-EMS records platform — pre-incident planning, response, NFIRS reporting, and scheduling — purpose-built for departments running on small IT teams. Multi-year GovTech 100 honoree.",
+    revenue:"~$15–25M ARR (est.)", employees:"80–140",
+    signal:"GT100; federal/state grant-funded SLG expansion 2025",
+    tags:["Public Safety","SLG","Growth"] },
+
+  { id:"forcemetrics2", name:"Truleo", url:"https://www.truleo.com",
+    overview:"Body-camera audio analytics for police agencies — auto-summarizes encounters, flags procedural compliance, and reduces review labor. Closed Series A in 2024 with growing mid-market LE customers.",
+    revenue:"~$5–10M ARR (est.)", employees:"30–55",
+    signal:"Series A 2024; first state-government AEs added 2025",
+    tags:["Public Safety","AI","Series A"] },
+
+  { id:"abel-police", name:"Abel Police", url:"https://www.abelpolice.com",
+    overview:"AI report-writing copilot for patrol officers — drafts incident reports from BWC audio and structured data with chain-of-custody preservation. YC-backed and live in early city PD pilots.",
+    revenue:"<$1M ARR (est.)", employees:"5–10",
+    signal:"YC alum; PD pilots 2025; founding SLG AE posted",
+    tags:["Public Safety","YC","Seed"] },
+
+  // --- Engagement / forms / digital services ---
+  { id:"seamlessgov", name:"SeamlessGov", url:"https://www.seamlessgov.com",
+    overview:"No-code digital forms and workflow platform for state and local agencies — replaces paper PDFs with secure online submissions and routing. GovTech 100 multi-year honoree.",
+    revenue:"~$8–15M ARR (est.)", employees:"50–90",
+    signal:"GT100 multi-year; growing SLG channel partnerships",
+    tags:["SLG","Forms","Growth"] },
+
+  { id:"tolemi", name:"Tolemi", url:"https://www.tolemi.com",
+    overview:"Property and housing data platform (BuildingBlocks) for cities — turns code enforcement, vacancies, and tax data into prioritized neighborhood-level workflows. Multi-city expansion in 2025.",
+    revenue:"~$3–6M ARR (est.)", employees:"15–30",
+    signal:"Multi-city expansion 2025; founding national SLG AE posted",
+    tags:["SLG","Housing","Growth"] },
+
+  // --- Procurement / spend ---
+  { id:"bonfire", name:"Bonfire", url:"https://www.gobonfire.com",
+    overview:"Strategic sourcing and e-procurement platform purpose-built for public-sector and higher-ed buyers in the U.S. and Canada. GovTech 100 multi-year honoree expanding U.S. SLED sales.",
+    revenue:"~$30–50M ARR (est.)", employees:"200–300",
+    signal:"GT100 multi-year; growing U.S. SLG named-account team",
+    tags:["Procurement","SLED","Growth"] },
+
+  { id:"sosa", name:"Sosa Procurement (SOSA NYC)", url:"https://www.sosa.co",
+    overview:"Open innovation platform connecting U.S. federal and SLG agencies with vetted dual-use startups for proof-of-concepts. Growing as a sourcing partner for OnRamp Hubs and DIU/AFWERX challenges.",
+    revenue:"~$5–10M (est.)", employees:"40–80",
+    signal:"DIU OnRamp partnerships 2025; federal BD hiring",
+    tags:["Open Innovation","DIU","Growth"] },
+
+  // --- Cyber / compliance ---
+  { id:"sayari", name:"Sayari", url:"https://sayari.com",
+    overview:"Public-records intelligence platform for sanctions, supply-chain due diligence, and counter-illicit-finance investigations. Customers include U.S. Treasury, DHS, and DoD components.",
+    revenue:"~$60–90M (est.)", employees:"250–350",
+    signal:"Federal civilian + DoD growth 2025; cleared analyst hiring",
+    tags:["Federal","Risk","Growth"] },
+
+  { id:"strider", name:"Strider Technologies", url:"https://www.striderintel.com",
+    overview:"Strategic intelligence platform that maps state-actor talent-acquisition and technology-transfer risk for governments and enterprises. Recently expanded its DoD and IC footprint.",
+    revenue:"~$50–80M (est.)", employees:"200–300",
+    signal:"DoD/IC contract growth 2025; cleared intel analysts hiring",
+    tags:["Defense","IC","Growth"] },
+
+  { id:"cape", name:"Cape", url:"https://www.cape.co",
+    overview:"Privacy-first mobile carrier built for cleared and at-risk users — no advertising data sale, hardened SIM/eSIM, and federal-friendly carrier infrastructure. Raised seed and Series A from defense-friendly investors.",
+    revenue:"<$5M (est.)", employees:"30–60",
+    signal:"DoD/IC pilots 2024–25; federal civilian sales hires",
+    tags:["Cyber","Defense","Series A"] },
+
+  // --- Health / benefits IT ---
+  { id:"jurny-bene", name:"Bene AI", url:"https://www.bene.ai",
+    overview:"AI assistant for caseworkers in Medicaid, SNAP, and TANF — surfaces eligibility rules, drafts notices, and explains denials in plain language. Live in early state benefit office pilots.",
+    revenue:"<$1M ARR (est.)", employees:"6–12",
+    signal:"State pilot 2025; founding SLG AE posted",
+    tags:["SLG","Benefits","Seed"] },
+
+  { id:"unite-us", name:"Unite Us", url:"https://www.uniteus.com",
+    overview:"Closed-loop social-care platform connecting Medicaid and public-health agencies to community organizations for referrals and outcome tracking. Continues to expand state Medicaid contracts.",
+    revenue:"~$80–120M (est.)", employees:"600–800",
+    signal:"State Medicaid contract growth 2025; federal civilian pursuits underway",
+    tags:["SLG","Health","Growth"] },
+
+  // --- Misc emerging ---
+  { id:"atomic-industries", name:"Atomic Industries", url:"https://www.atomic.industries",
+    overview:"AI-driven precision-tooling factory for defense and dual-use parts — mold and die design automation that compresses lead times from months to weeks. Series B 2025 with growing defense customer mix.",
+    revenue:"~$15–30M (est.)", employees:"80–140",
+    signal:"Series B 2025; cleared production engineers hiring",
+    tags:["Defense","Manufacturing","Series B"] },
+
+  { id:"pano-ai", name:"Pano AI", url:"https://www.pano.ai",
+    overview:"AI wildfire detection — high-res cameras and ML that alert utilities, state forestry, and federal land managers within minutes. Major utility and CAL FIRE-adjacent expansion in 2024–25.",
+    revenue:"~$15–25M (est.)", employees:"80–140",
+    signal:"Multi-state expansion 2025; federal civilian (USFS / DOI) sales hires",
+    tags:["SLG","Wildfire","Growth"] }
+];
+
+// Market classification — federal-only, state-and-local-only, or both.
+// Based on each company's primary go-to-market customer set in 2025–26.
+const MARKET = {
+  // Federal-focused (DoD, IC, federal civilian)
+  "knox":"federal", "archon":"federal", "regscale":"federal", "secondfront":"federal",
+  "procurement-sciences":"federal", "candor":"federal", "vulcan":"federal",
+  "obviant":"federal", "omnisync":"federal", "scout-ai":"federal", "blue-water":"federal",
+  "vannevar":"federal", "castelion":"federal", "hadrian":"federal",
+  "chaos-industries":"federal", "true-anomaly":"federal", "saronic":"federal",
+  "epirus":"federal", "rangeforce":"federal", "tomorrow":"federal", "saildrone":"federal",
+  "primer":"federal", "rebellion":"federal", "stoke-space":"federal",
+  "perseus":"federal", "juxta":"federal", "usul":"federal", "allen-control":"federal",
+  "mach":"federal", "k2-space":"federal", "apex-space":"federal",
+  "impulse-space":"federal", "portal-space":"federal", "orbital-ops":"federal",
+  "persona-ai":"federal", "helsing":"federal", "destinus":"federal",
+  "govly":"federal", "distyl":"federal", "latent-ai":"federal", "govini":"federal",
+  "bidscale":"federal", "granted-ai":"federal", "empower-ai":"federal",
+  "aalyria":"federal", "leolabs":"federal", "loft-orbital":"federal",
+  "episci":"federal", "beacon-ai":"federal", "sayari":"federal", "strider":"federal",
+  "cape":"federal", "atomic-industries":"federal",
+
+  // State & Local (cities, counties, states, K-12, higher-ed, special districts)
+  "polimorphic":"sl", "govwell":"sl", "govstream":"sl", "govstudio":"sl",
+  "civilized-ai":"sl", "holly":"sl", "permitflow":"sl", "civic-marketplace":"sl",
+  "madison-ai":"sl", "syncurrent":"sl", "swiftbuild":"sl", "emulate-cities":"sl",
+  "infilla":"sl", "darwinai":"sl", "forcemetrics":"sl", "gravity":"sl",
+  "just-appraised":"sl", "klir":"sl", "peregrine":"sl", "plum-identity":"sl",
+  "via":"sl", "citydata":"sl", "neumo":"sl", "publicinput":"sl",
+  "carbyne":"sl", "mark43":"sl", "hayden-ai":"sl", "glydways":"sl", "cleargov":"sl",
+  "foundation-civic":"sl", "first-due":"sl", "forcemetrics2":"sl", "abel-police":"sl",
+  "seamlessgov":"sl", "tolemi":"sl", "bonfire":"sl", "jurny-bene":"sl", "unite-us":"sl",
+
+  // Multi-market — actively selling into both federal and state/local from day one
+  "hazel":"both", "starbridge":"both", "1000more":"both", "skydio":"both",
+  "nava":"both", "simpligov":"both", "quantum-systems":"both", "sosa":"both",
+  "pano-ai":"both"
+};
+
+const MARKET_LABEL = { "federal":"Federal", "sl":"S&L", "both":"Both" };
+
+function marketOf(id) { return MARKET[id] || "both"; }
+
+const STATE_KEY = "govmotion-state-v4";
+const VIEW_KEY = "govmotion-view";
+const state = loadState();
+let marketFilter = "all";
+let viewMode = (function() {
+  try { return localStorage.getItem(VIEW_KEY) || "cards"; } catch { return "cards"; }
+})();
+
+// Migrate any v3 single-string state into the new multi-flag shape if present.
+(function migrate() {
+  try {
+    const oldRaw = localStorage.getItem("govmotion-state-v3");
+    if (!oldRaw) return;
+    const old = JSON.parse(oldRaw);
+    let changed = false;
+    for (const id of Object.keys(old)) {
+      if (state[id]) continue;
+      const v = old[id];
+      const rec = {};
+      if (v === "star") rec.star = true;
+      else if (v === "keep") rec.target = true;   // Keep -> Target
+      else if (v === "delete") rec.deleted = true;
+      state[id] = rec;
+      changed = true;
+    }
+    if (changed) saveState();
+  } catch {}
+})();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch { return {}; }
+}
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function statusOf(id) { return state[id] || {}; }
+function toggleFlag(id, key) {
+  const cur = state[id] || {};
+  cur[key] = !cur[key];
+  // clean up empty records so reset and counts stay accurate
+  if (!cur.star && !cur.target && !cur.partner && !cur.deleted) delete state[id];
+  else state[id] = cur;
+  saveState();
+  render();
+}
+
+// Sort priority: starred first, then targets, then partners, then plain, then deleted.
+function statusRank(s) {
+  if (s.deleted) return 4;
+  if (s.star) return 0;
+  if (s.target) return 1;
+  if (s.partner) return 2;
+  return 3;
+}
+
+function actionsHTML(c, s) {
+  return `
+    <div class="actions">
+      <button class="btn star ${s.star?'active':''}" data-id="${c.id}" data-act="star">★ Star</button>
+      <button class="btn target ${s.target?'active':''}" data-id="${c.id}" data-act="target">Target</button>
+      <button class="btn partner ${s.partner?'active':''}" data-id="${c.id}" data-act="partner">Partner</button>
+      <button class="btn delete ${s.deleted?'active':''}" data-id="${c.id}" data-act="deleted">Not Likely</button>
+    </div>`;
+}
+
+function render() {
+  const grid = document.getElementById("grid");
+  const tableBody = document.getElementById("table-body");
+  const tableWrap = document.getElementById("table-wrap");
+  const q = (document.getElementById("search").value || "").toLowerCase().trim();
+  const f = document.getElementById("filter").value;
+  const sortBy = document.getElementById("sort").value;
+
+  // Toggle the active view container
+  grid.style.display = (viewMode === "cards") ? "" : "none";
+  tableWrap.style.display = (viewMode === "table") ? "" : "none";
+  document.querySelectorAll(".tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.view === viewMode);
+  });
+
+  grid.innerHTML = "";
+  tableBody.innerHTML = "";
+  let visible = 0, starN = 0, targetN = 0, partnerN = 0, delN = 0;
+  let fedN = 0, slN = 0, bothN = 0;
+
+  // counts (global, not filtered)
+  COMPANIES.forEach(c => {
+    const s = statusOf(c.id);
+    if (s.star) starN++;
+    if (s.target) targetN++;
+    if (s.partner) partnerN++;
+    if (s.deleted) delN++;
+    const m = marketOf(c.id);
+    if (m === "federal") fedN++;
+    else if (m === "sl") slN++;
+    else if (m === "both") bothN++;
+  });
+
+  let list = COMPANIES.slice();
+  if (sortBy === "name") list.sort((a,b) => a.name.localeCompare(b.name));
+  else if (sortBy === "status") list.sort((a,b) => statusRank(statusOf(a.id)) - statusRank(statusOf(b.id)));
+
+  list.forEach(c => {
+    const s = statusOf(c.id);
+    const m = marketOf(c.id);
+
+    let matchFilter = true;
+    if (f === "star") matchFilter = !!s.star;
+    else if (f === "target") matchFilter = !!s.target;
+    else if (f === "partner") matchFilter = !!s.partner;
+    else if (f === "delete") matchFilter = !!s.deleted;
+    else if (f === "active") matchFilter = !s.deleted;
+    else if (f === "any") matchFilter = !!(s.star || s.target || s.partner);
+
+    let matchMarket = true;
+    if (marketFilter !== "all") matchMarket = (m === marketFilter);
+
+    const matchSearch = !q ||
+      c.name.toLowerCase().includes(q) ||
+      c.overview.toLowerCase().includes(q) ||
+      (c.tags || []).some(t => t.toLowerCase().includes(q));
+
+    if (!matchFilter || !matchSearch || !matchMarket) return;
+    visible++;
+
+    // --- Card view ---
+    if (viewMode === "cards") {
+      const card = document.createElement("div");
+      card.className = "card" +
+        (s.star ? " starred" : "") +
+        (s.target ? " targeted" : "") +
+        (s.partner ? " partnered" : "") +
+        (s.deleted ? " deleted" : "");
+
+      const stripParts = [];
+      if (s.star) stripParts.push('<span class="s-star" title="Starred"></span>');
+      if (s.target) stripParts.push('<span class="s-target" title="Target"></span>');
+      if (s.partner) stripParts.push('<span class="s-partner" title="Partner"></span>');
+      const strip = stripParts.length ? `<div class="status-strip">${stripParts.join("")}</div>` : "";
+
+      card.innerHTML = `
+        ${strip}
+        <div class="card-head">
+          <div class="company"><a href="${c.url}" target="_blank" rel="noopener">${c.name}</a></div>
+          <div class="badges">
+            <span class="market-badge ${m}">${MARKET_LABEL[m]}</span>
+            ${(c.tags || []).map(t => `<span class="badge">${t}</span>`).join("")}
+          </div>
+        </div>
+        <div class="overview">${c.overview}</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="label">Revenue</div>
+            <div class="value">${c.revenue}</div>
+          </div>
+          <div class="metric">
+            <div class="label">Employees</div>
+            <div class="value">${c.employees}</div>
+          </div>
+        </div>
+        <div class="signal-row"><b>Signal:</b> ${c.signal}</div>
+        ${actionsHTML(c, s)}
+      `;
+      grid.appendChild(card);
+    }
+    // --- Table view ---
+    else {
+      const tr = document.createElement("tr");
+      const rowCls = [];
+      if (s.star) rowCls.push("row-star");
+      if (s.target) rowCls.push("row-target");
+      if (s.partner) rowCls.push("row-partner");
+      if (s.deleted) rowCls.push("row-deleted");
+      tr.className = rowCls.join(" ");
+
+      const dots = [];
+      if (s.star) dots.push('<span class="dot s-star" title="Starred"></span>');
+      if (s.target) dots.push('<span class="dot s-target" title="Target"></span>');
+      if (s.partner) dots.push('<span class="dot s-partner" title="Partner"></span>');
+      const dotsHTML = dots.length ? `<span class="status-dots">${dots.join("")}</span>` : "";
+
+      tr.innerHTML = `
+        <td class="col-company">
+          <div class="name"><a href="${c.url}" target="_blank" rel="noopener">${c.name}</a>${dotsHTML}</div>
+          <div class="row-badges">
+            <span class="market-badge ${m}">${MARKET_LABEL[m]}</span>
+            ${(c.tags || []).map(t => `<span class="badge">${t}</span>`).join("")}
+          </div>
+        </td>
+        <td class="col-overview">${c.overview}</td>
+        <td class="col-signal">${c.signal}</td>
+        <td class="col-actions">${actionsHTML(c, s)}</td>
+      `;
+      tableBody.appendChild(tr);
+    }
+  });
+
+  document.getElementById("count-total").textContent = visible + " / " + COMPANIES.length;
+  document.getElementById("count-star").textContent = starN;
+  document.getElementById("count-target").textContent = targetN;
+  document.getElementById("count-partner").textContent = partnerN;
+  document.getElementById("count-delete").textContent = delN;
+
+  document.getElementById("ct-all").textContent = COMPANIES.length;
+  document.getElementById("ct-federal").textContent = fedN;
+  document.getElementById("ct-sl").textContent = slN;
+  document.getElementById("ct-both").textContent = bothN;
+
+  // sync pill active state
+  document.querySelectorAll(".pill").forEach(p => {
+    p.classList.remove("active","fed","sl","both");
+    if (p.dataset.market === marketFilter) {
+      p.classList.add("active");
+      if (marketFilter === "federal") p.classList.add("fed");
+      else if (marketFilter === "sl") p.classList.add("sl");
+      else if (marketFilter === "both") p.classList.add("both");
+    }
+  });
+}
+
+document.addEventListener("click", (e) => {
+  const tab = e.target.closest("button.tab");
+  if (tab) {
+    viewMode = tab.dataset.view;
+    try { localStorage.setItem(VIEW_KEY, viewMode); } catch {}
+    render();
+    return;
+  }
+  const pill = e.target.closest("button.pill");
+  if (pill) { marketFilter = pill.dataset.market; render(); return; }
+  const btn = e.target.closest("button.btn");
+  if (btn) { toggleFlag(btn.dataset.id, btn.dataset.act); return; }
+  if (e.target.id === "reset") {
+    e.preventDefault();
+    if (confirm("Reset all Star / Keep / Delete state?")) {
+      for (const k of Object.keys(state)) delete state[k];
+      saveState();
+      render();
+    }
+  }
+});
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("filter").addEventListener("change", render);
+document.getElementById("sort").addEventListener("change", render);
+
+render();
+</script>
+</body>
+</html>
